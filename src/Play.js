@@ -62,7 +62,7 @@ class Play extends Phaser.Scene {
 
         // cup/ball collision
         this.physics.add.collider(this.ball, this.cup, (ball, cup) => {
-            ball.destroy()
+            this.ballreset()
         })
 
         // ball/wall collision
@@ -75,11 +75,16 @@ class Play extends Phaser.Scene {
     update() {
 
     }
+
+    ballreset() {
+        this.ball.setPosition(width / 2, height - height / 10)
+        this.ball.body.setVelocity(0)
+    }
 }
 /*
 CODE CHALLENGE
 Try to implement at least 3/4 of the following features during the remainder of class (hint: each takes roughly 15 or fewer lines of code to implement):
-[ ] Add ball reset logic on successful shot
+[DONE] Add ball reset logic on successful shot
 [ ] Improve shot logic by making pointer’s relative x-position shoot the ball in correct x-direction
 [ ] Make one obstacle move left/right and bounce against screen edges
 [ ] Create and display shot counter, score, and successful shot percentage
