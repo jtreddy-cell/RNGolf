@@ -8,6 +8,10 @@ class Play extends Phaser.Scene {
         this.SHOT_VELOCITY_X = 200
         this.SHOT_VELCOCITY_Y_MIN = 700
         this.SHOT_VELCOCITY_Y_MAX = 1100
+        // initialize display variables
+        this.shot_counter = 0
+        this.score = 0
+        this.shot_percentage = 0
     }
 
     preload() {
@@ -62,12 +66,17 @@ class Play extends Phaser.Scene {
             let shotDirectionY = pointer.y <= this.ball.y ? 1 : -1
             this.ball.body.setVelocityX(Phaser.Math.Between(0, this.SHOT_VELOCITY_X) * shotDirectionX)
             this.ball.body.setVelocityY(Phaser.Math.Between(this.SHOT_VELCOCITY_Y_MIN, this.SHOT_VELCOCITY_Y_MAX) * shotDirectionY)
+            // increment shot counter, update shot percentage
+            this.shot_counter += 1
+            this.shot_percentage = (this.score / this.shot_counter * 100).toFixed(2)
         })
 
         // cup/ball collision
         this.physics.add.collider(this.ball, this.cup, (ball, cup) => {
-            // reset ball on score
+            // reset ball on score, increment score, update shot percentage
             this.ballreset()
+            this.score += 1
+            this.shot_percentage = (this.score / this.shot_counter * 100).toFixed(2)
         })
 
         // ball/wall collision
@@ -85,7 +94,15 @@ class Play extends Phaser.Scene {
             wallA.direction *= -1
         } 
 
+        // display stats on screen
+        this.displayStats()
+    }
 
+    displayStats() {
+        // display shot counter, score, and shot percentage on screen\
+        if (this.statsText) this.statsText.destroy()
+        let statsString = `Shots: ${this.shot_counter}  Score: ${this.score}  Shot %: ${this.shot_percentage}`
+        this.statsText = this.add.text(10, 10, statsString, { font: '16px Arial', fill: '#ffffff' })
     }
 
     // reset ball position
@@ -100,5 +117,5 @@ Try to implement at least 3/4 of the following features during the remainder of 
 [DONE] Add ball reset logic on successful shot
 [DONE] Improve shot logic by making pointer’s relative x-position shoot the ball in correct x-direction
 [DONE] Make one obstacle move left/right and bounce against screen edges
-[ ] Create and display shot counter, score, and successful shot percentage
+[DONE] Create and display shot counter, score, and successful shot percentage
 */
