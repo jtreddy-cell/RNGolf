@@ -40,6 +40,8 @@ class Play extends Phaser.Scene {
         let wallA = this.physics.add.sprite(0, height / 4, 'wall')
         wallA.setX(Phaser.Math.Between(0 + wallA.width / 2, width - wallA.width / 2))
         wallA.body.setImmovable(true)
+        wallA.direction = 1
+        wallA.velocity = 100
 
         let wallB = this.physics.add.sprite(0, height / 2, 'wall')
         wallB.setX(Phaser.Math.Between(0 + wallB.width / 2, width - wallB.width / 2))
@@ -55,6 +57,7 @@ class Play extends Phaser.Scene {
 
         // add pointer input
         this.input.on('pointerdown', (pointer) => {
+            // direct shot along x-axis based on pointer position
             let shotDirectionX = pointer.x <= this.ball.x ? 1 : -1
             let shotDirectionY = pointer.y <= this.ball.y ? 1 : -1
             this.ball.body.setVelocityX(Phaser.Math.Between(0, this.SHOT_VELOCITY_X) * shotDirectionX)
@@ -63,6 +66,7 @@ class Play extends Phaser.Scene {
 
         // cup/ball collision
         this.physics.add.collider(this.ball, this.cup, (ball, cup) => {
+            // reset ball on score
             this.ballreset()
         })
 
@@ -74,9 +78,17 @@ class Play extends Phaser.Scene {
     }
 
     update() {
+        // move wall A left/right
+        let wallA = this.walls.getChildren()[0]
+        wallA.x += wallA.direction * wallA.velocity * this.game.loop.delta / 1000
+        if (wallA.x >= width - wallA.width / 2 | wallA.x <= wallA.width / 2) {
+            wallA.direction *= -1
+        } 
+
 
     }
 
+    // reset ball position
     ballreset() {
         this.ball.setPosition(width / 2, height - height / 10)
         this.ball.body.setVelocity(0)
@@ -87,6 +99,6 @@ CODE CHALLENGE
 Try to implement at least 3/4 of the following features during the remainder of class (hint: each takes roughly 15 or fewer lines of code to implement):
 [DONE] Add ball reset logic on successful shot
 [DONE] Improve shot logic by making pointer’s relative x-position shoot the ball in correct x-direction
-[ ] Make one obstacle move left/right and bounce against screen edges
+[DONE] Make one obstacle move left/right and bounce against screen edges
 [ ] Create and display shot counter, score, and successful shot percentage
 */
